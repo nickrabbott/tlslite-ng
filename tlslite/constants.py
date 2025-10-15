@@ -243,6 +243,11 @@ class SignatureScheme(TLSEnum):
     rsa_pss_sha384 = (8, 5)
     rsa_pss_sha512 = (8, 6)
 
+    # draft-tls-westerbaan-mldsa-00
+    mldsa44 = (9, 4)
+    mldsa65 = (9, 5)
+    mldsa87 = (9, 6)
+
     # RFC 8734
     # the names are from RFC, so we don't care that they don't follow naming
     # pattern
@@ -277,6 +282,8 @@ class SignatureScheme(TLSEnum):
         """
         if scheme in ("ed25519", "ed448"):
             return "eddsa"
+        if "mldsa" in scheme:
+            return "mldsa"
         try:
             getattr(SignatureScheme, scheme)
         except AttributeError:
@@ -304,7 +311,7 @@ class SignatureScheme(TLSEnum):
     def getHash(scheme):
         """Return the name of hash used in signature scheme."""
         # there is no explicit hash in the EDDSA, see RFC 8422
-        if scheme in ("ed25519", "ed448"):
+        if scheme in ("ed25519", "ed448", "mldsa44", "mldsa65", "mldsa87"):
             return "intrinsic"
         try:
             getattr(SignatureScheme, scheme)
@@ -389,6 +396,12 @@ class AlgorithmOID(TLSEnum):
             SignatureScheme.ed25519
     oid[bytes(a2b_hex('06032b6571'))] = \
             SignatureScheme.ed448
+    oid[bytes(a2b_hex('0609608648016503040311'))] = \
+            SignatureScheme.mldsa44
+    oid[bytes(a2b_hex('0609608648016503040312'))] = \
+            SignatureScheme.mldsa65
+    oid[bytes(a2b_hex('0609608648016503040313'))] = \
+            SignatureScheme.mldsa87
 
 
 class GroupName(TLSEnum):
